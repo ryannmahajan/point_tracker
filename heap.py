@@ -33,6 +33,14 @@ class Heap :
 
     def is_transaction_at_top_of_list(self, transaction):
         return self.peek()==transaction
+    
+    def is_empty(self):
+        try:
+            self.peek()
+        except IndexError:
+            return True
+        
+        return False
 
 if __name__=='__main__':
     t1 = Transaction(payer= "DANNON1", points=300, timestamp= "2022-10-31T10:00:00Z")
@@ -45,8 +53,9 @@ if __name__=='__main__':
     h.add(t2)
 
     h.remove(t2)
-    print(h.pop().payer)
-    print(h.peek().payer)
+    print(h.pop().payer_name)
+    print(h.pop().payer_name)
+    print(h.is_empty())
 
     print(h.heap)
     print(type(h))

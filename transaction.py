@@ -4,7 +4,7 @@ from functools import total_ordering
 @total_ordering
 class Transaction:
     def __init__(self, payer, points: int, timestamp):
-        self.payer = payer
+        self.payer_name = payer
         self.points = points
         self.timestamp = timestamp
 
