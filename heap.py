@@ -1,16 +1,16 @@
 from heapq import *
-from typing import List
 
 from transaction import Transaction
 
 class Heap :
     def __init__(self):
-        self.heap = heapify(List())
+        self.heap = []
+        heapify(self.heap)
     
     def add(self, item):
         heappush(self.heap, item)
     
-    def pop(self):
+    def pop(self) -> Transaction:
         self.pop_invalid_transactions()
         return heappop(self.heap)
 
@@ -32,4 +32,21 @@ class Heap :
             transaction.mark_removed()
 
     def is_transaction_at_top_of_list(self, transaction):
-        return self.peek().equals(transaction)
+        return self.peek()==transaction
+
+if __name__=='__main__':
+    t1 = Transaction(payer= "DANNON1", points=300, timestamp= "2022-10-31T10:00:00Z")
+    t3 = Transaction(payer= "DANNON3", points=300, timestamp= "2022-10-31T11:40:00Z")
+    t2 = Transaction(payer= "DANNON2", points=300, timestamp= "2022-10-31T11:00:00Z")
+
+    h = Heap()
+    h.add(t1)
+    h.add(t3)
+    h.add(t2)
+
+    h.remove(t2)
+    print(h.pop().payer)
+    print(h.peek().payer)
+
+    print(h.heap)
+    print(type(h))
