@@ -18,16 +18,14 @@ def add_transaction():
     payer, points, timestamp = record['payer'], record['points'], record['timestamp']
     transaction = Transaction(payer, points, timestamp)
 
-    if int(points) > 0:
-        tracker.track(transaction)
-    
-    else:
-        tracker.reduce_points_for_payer(payer, points)
+    tracker.create_payer_if_not_exists(transaction)
+    tracker.track(transaction)
     
     return Response(status=200)
 
 @app.route('/expense', methods = ['POST'])
 def spend():
+    return tracker.spend(points = 500)
     return Response(status=200)
 
 #     while points > 0:
@@ -37,6 +35,6 @@ def spend():
 
 @app.route('/balance', methods = ['GET'])
 def get_balance():
-    return {payer: payer.balance for payer in tracker.payers}
+    return tracker.get_balance()
 
 
