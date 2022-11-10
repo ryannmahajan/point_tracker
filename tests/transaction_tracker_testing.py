@@ -15,31 +15,40 @@ class SimpleTest(unittest.TestCase):
         ]
 
         for t in self.transactions_list:
-            self.tracker.create_payer_if_not_exists(t)
             self.tracker.track(t)
-    
-    def test_spend(self):
-        self.tracker.reduce_points_from_any(400)
-        t = self.tracker.find_oldest_transaction()
 
-        self.assertEqual(("2022-10-31T11:40:00Z", 200), (t.timestamp, t.points))
-    
-    def test_oldest_transaction(self):
-        t = self.tracker.find_oldest_transaction()
-        self.assertEqual(t.timestamp, "2022-10-31T11:00:00Z")
+    def test_balance(self):
+        balances_dict = self.tracker.get_balance()
+        dannon_1_balance = balances_dict["DANNON1"]
+        dannon2_balance = balances_dict["DANNON2"]
+
+        self.assertEqual(dannon_1_balance, 300)
+        self.assertEqual(dannon2_balance, 600)
+
+    def test_spend(self):
+        initial_sum = sum_of_balances(self.tracker.get_balance())
+        self.tracker.spend(400)
+        final_sum = sum_of_balances(self.tracker.get_balance())
+        self.assertEqual(final_sum, initial_sum - 400)
     
     def test_track_positive_transaction(self):
         transaction = Transaction(payer= "DANNON1", points=300, timestamp= "2022-10-31T11:50:00Z")
         self.tracker.track(transaction)
-        self.assertEquals(600, PayerRepository.get_payer("DANNON1").balance)
+        self.assertEqual(600, PayerRepository.get_payer("DANNON1").balance)
     
     def test_track_negative_transaction(self):
-        transaction = Transaction(payer= "DANNON2", points=-400, timestamp= "2022-10-31T11:50:00Z")
+        payer_name = "DANNON2"
+
+        initial_points = self.tracker.get_balance()[payer_name]
+
+        transaction = Transaction(payer= payer_name, points=-400, timestamp= "2022-10-31T11:50:00Z")
         self.tracker.track(transaction)
 
-        t = self.tracker.find_oldest_transaction()
-        self.assertEqual(("2022-10-31T11:40:00Z", 200), (t.timestamp, t.points))
+        final_points = self.tracker.get_balance()[payer_name]
+        self.assertEqual(final_points, initial_points - 400)
 
-
+def sum_of_balances(balances_dict: dict):
+    return sum(balances_dict.values())
+    
 if __name__ == '__main__':
     unittest.main()

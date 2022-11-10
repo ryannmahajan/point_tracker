@@ -1,9 +1,9 @@
 from Logger import Logger
-from payer import PayerRepository
+from payer import Payer, PayerRepository
 from transaction import Transaction, TransactionRepository
 
 class Points_remover:
-    def ____init__(self, points_to_remove):
+    def __init__(self, points_to_remove):
         self.points_to_remove = points_to_remove
         self.heap_to_fetch_oldest_transactions_from = TransactionRepository.get_heap()
 
@@ -30,16 +30,19 @@ class Points_remover:
         return transaction.points <= (self.points_to_remove)
 
     def remove_from_heaps(self, transaction: Transaction):
-        # TODO: fill this
+        payer_that_has_the_transaction = self.get_payer_object_that_has(transaction)
 
-        heaps_to_remove_from = [TransactionRepository.get_heap(), PayerRepository.get_payer()]
+        heaps_to_remove_from = [TransactionRepository.get_heap(), payer_that_has_the_transaction.heap]
         for heap_to_remove_from in heaps_to_remove_from:
             heap_to_remove_from.remove(transaction)
         
         self.points_to_remove -= transaction.points
 
-        payer, points = PayerRepository.get(transaction.payer_name), transaction.points
-        self.reduce_payer_balance_and_log(payer, points)
+        points = transaction.points
+        self.reduce_payer_balance_and_log(payer_that_has_the_transaction, points)
+    
+    def get_payer_object_that_has(self, transaction):
+        return PayerRepository.get_payer(transaction.payer_name)
 
     def reduce_payer_balance_and_log(self, payer, points):
         payer.balance -= points
@@ -48,7 +51,7 @@ class Points_remover:
     def handle_rest_of_the_balance_without_removing(self, transaction: Transaction):
         transaction.points -= self.points_to_remove
 
-        payer, points = PayerRepository.get(transaction.payer_name), self.points_to_remove
+        payer, points = self.get_payer_object_that_has(transaction), self.points_to_remove
         self.reduce_payer_balance_and_log(payer, points)
 
     def get_logs(self) -> dict():

@@ -24,9 +24,9 @@ class PayerRepository:
         PayerRepository.__add_payer_if_needed(name)
         return PayerRepository.__payers[name]
 
-    def __add_payer_if_needed(self, name):
-        if name not in self.__payers:
-            self.__payers[name] = Payer(name)
+    def __add_payer_if_needed(name):
+        if name not in PayerRepository.__payers:
+            PayerRepository.__payers[name] = Payer(name)
     
     def get_balance_for_all_payers():
-        return {payer: payer.balance for payer in PayerRepository.__payers}
+        return {payer_name: payer.balance for payer_name, payer in PayerRepository.__payers.items()}

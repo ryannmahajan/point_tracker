@@ -1,7 +1,5 @@
 from heapq import *
 
-from transaction import Transaction
-
 class Heap :
     def __init__(self):
         self.heap = []
@@ -10,7 +8,7 @@ class Heap :
     def add(self, item):
         heappush(self.heap, item)
     
-    def pop(self) -> Transaction:
+    def pop(self):
         self.pop_invalid_transactions()
         return heappop(self.heap)
 
@@ -20,11 +18,11 @@ class Heap :
             heappop(self.heap)
             transaction = self.peek()
     
-    def peek(self) -> Transaction:
+    def peek(self):
         self.pop_invalid_transactions()
         return self.heap[0]
 
-    def remove(self, transaction: Transaction):
+    def remove(self, transaction):
         if self.is_transaction_at_top_of_list(transaction):
             self.pop()
         
