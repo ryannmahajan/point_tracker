@@ -28,8 +28,8 @@ class TransactionTracker:
         self.raise_error_if_payer_does_not_have_points(payer, points_to_remove)
 
         remover = Points_remover(points_to_remove)
-        remover.find_oldest_transaction_from(payer.heap)
-        remover.remove()
+        remover.find_oldest_transactions_to_remove_from(payer.heap)
+        remover.remove_starting_from_oldest_transaction()
 
     def raise_error_if_payer_does_not_have_points(self, payer, points_to_remove):
         if payer.balance < points_to_remove:
@@ -41,7 +41,7 @@ class TransactionTracker:
     def spend(self, points: int) -> dict:
         remover = Points_remover(points)
         
-        remover.remove()
+        remover.remove_starting_from_oldest_transaction()
         return remover.get_logs()
 
     def get_balance(self) -> dict:

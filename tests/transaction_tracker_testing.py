@@ -1,7 +1,6 @@
 import json
 import unittest
 
-from flask import jsonify
 from payer import PayerRepository
 from transaction import Transaction, TransactionRepository
 from transaction_tracker import TransactionTracker
