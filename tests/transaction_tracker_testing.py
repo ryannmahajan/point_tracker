@@ -1,4 +1,5 @@
 import unittest
+from payer import PayerRepository
 from transaction import Transaction
 from transaction_tracker import TransactionTracker
 
@@ -26,8 +27,18 @@ class SimpleTest(unittest.TestCase):
     def test_oldest_transaction(self):
         t = self.tracker.find_oldest_transaction()
         self.assertEqual(t.timestamp, "2022-10-31T11:00:00Z")
+    
+    def test_track_positive_transaction(self):
+        transaction = Transaction(payer= "DANNON1", points=300, timestamp= "2022-10-31T11:50:00Z")
+        self.tracker.track(transaction)
+        self.assertEquals(600, PayerRepository.get_payer("DANNON1").balance)
+    
+    def test_track_negative_transaction(self):
+        transaction = Transaction(payer= "DANNON2", points=-400, timestamp= "2022-10-31T11:50:00Z")
+        self.tracker.track(transaction)
 
-
+        t = self.tracker.find_oldest_transaction()
+        self.assertEqual(("2022-10-31T11:40:00Z", 200), (t.timestamp, t.points))
 
 
 if __name__ == '__main__':
