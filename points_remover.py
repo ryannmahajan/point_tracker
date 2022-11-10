@@ -4,7 +4,7 @@ from transaction import Transaction, TransactionRepository
 
 class Points_remover:
     def __init__(self, points_to_remove):
-        self.points_to_remove = points_to_remove
+        self.points_to_remove = abs(points_to_remove)
         self.heap_to_fetch_oldest_transactions_from = TransactionRepository.get_heap()
 
         self.oldest_transaction = None
