@@ -1,5 +1,3 @@
-from Logger import Logger
-from heap import Heap
 from payer import PayerRepository
 from transaction import Transaction, TransactionRepository
 from points_remover import Points_remover
@@ -11,19 +9,22 @@ class TransactionTracker:
     def track(self, transaction: Transaction):
         points = transaction.points
         if points > 0:
-            self.add_to_system(transaction)
+            self.add_positive_transaction(transaction)
     
         else:
-            self.remove_from_system(transaction)
+            self.remove_points_equivalent_to(transaction)
 
-    def add_to_system(self, transaction):
+    def add_positive_transaction(self, transaction):
         PayerRepository.add_to_respective_payer(transaction)
         TransactionRepository.add(transaction)    
     
-    def remove_from_system(self, transaction: Transaction):
+    def remove_points_equivalent_to(self, transaction: Transaction):
         payer = PayerRepository.get_payer(transaction.payer_name)
         points_to_remove = transaction.points
 
+        self.remove_points_from_this_payer_specifically(payer, points_to_remove)
+
+    def remove_points_from_this_payer_specifically(self, payer, points_to_remove):
         if payer.balance < points_to_remove:
             self.raise_insufficient_balance_error(payer, points_to_remove)
         else:

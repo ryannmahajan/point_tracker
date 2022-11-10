@@ -25,12 +25,6 @@ def add_transaction():
 @app.route('/expense', methods = ['POST'])
 def spend():
     return tracker.spend(points = 500)
-    return Response(status=200)
-
-#     while points > 0:
-#         transaction = tracker.find_oldest_transaction()
-#         tracker.reduce_points_for_payer(transaction.payer, points)
-#         payer -= min(transaction.points, points)
 
 @app.route('/balance', methods = ['GET'])
 def get_balance():
