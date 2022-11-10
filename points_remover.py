@@ -46,7 +46,7 @@ class Points_remover:
 
     def reduce_payer_balance_and_log(self, payer, points):
         payer.balance -= points
-        self.removed_points_log.log(payer.name, points)
+        self.removed_points_log.log(payer.name, -points)
 
     def handle_rest_of_the_balance_without_removing(self, transaction: Transaction):
         transaction.points -= self.points_to_remove

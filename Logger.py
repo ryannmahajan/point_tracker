@@ -1,4 +1,7 @@
 class Logger:
+    PAYER_KEY = "payer"
+    POINTS_KEY = "points"
+
     def __init__(self):
         self._log_collection = dict()
     
@@ -15,7 +18,8 @@ class Logger:
             self._log_collection[name] = 0
     
     def get_logs(self):
-        return self._log_collection
+        return [{Logger.PAYER_KEY: payer, Logger.POINTS_KEY : points}
+         for payer, points in self._log_collection.items()]
         
 
         
