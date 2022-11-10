@@ -1,30 +1,17 @@
 from Logger import Logger
 from payer import PayerRepository
-from transaction import Transaction
+from transaction import Transaction, TransactionRepository
 
 class Points_remover:
-    class Builder:
-        def ____init__(self):
-            self.points_remover = Points_remover()
-            return self
+    def ____init__(self, points_to_remove):
+        self.points_to_remove = points_to_remove
+        self.heap_to_fetch_oldest_transactions_from = TransactionRepository.get_heap()
 
-        def to_remove(self, points_to_remove):
-            self.points_remover.points_to_remove = points_to_remove
-            return self
-
-        def start_with_oldest_transaction_from(self, heap):
-            self.points_remover.heap_to_fetch_oldest_transactions_from = heap
-            return self
-
-        def build(self):
-            return self.points_remover
-
-    def ____init__(self):
-        self.points_to_remove = 0
-        self.heap_to_fetch_oldest_transactions_from = None
-        self.heaps_to_remove_from = []
         self.oldest_transaction = None
         self.removed_points_log = Logger()
+    
+    def find_oldest_transaction_from(self, heap):
+        self.heap_to_fetch_oldest_transactions_from = heap
 
     def remove(self):
         self.update_oldest_transaction()
@@ -43,7 +30,10 @@ class Points_remover:
         return transaction.points <= (self.points_to_remove)
 
     def remove_from_heaps(self, transaction: Transaction):
-        for heap_to_remove_from in self.heaps_to_remove_from:
+        # TODO: fill this
+
+        heaps_to_remove_from = [TransactionRepository.get_heap(), PayerRepository.get_payer()]
+        for heap_to_remove_from in heaps_to_remove_from:
             heap_to_remove_from.remove(transaction)
         
         self.points_to_remove -= transaction.points

@@ -18,7 +18,6 @@ def add_transaction():
     payer, points, timestamp = record['payer'], record['points'], record['timestamp']
     transaction = Transaction(payer, points, timestamp)
 
-    tracker.create_payer_if_not_exists(transaction)
     tracker.track(transaction)
     
     return Response(status=200)

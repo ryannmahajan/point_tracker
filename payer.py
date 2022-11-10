@@ -1,13 +1,6 @@
 from heap import Heap
 from transaction import Transaction
 
-class PayerRepository:    
-    __payers = dict()
-        
-    def get_payer(self, name):
-        return PayerRepository.__payers[name]
-
-
 class Payer:
     def __init__(self, name, heap: Heap = Heap(), balance: int = 0) -> None:
         self.name = name
@@ -16,3 +9,24 @@ class Payer:
     
     def from_transaction(transaction: Transaction):
         return Payer(transaction.payer_name)
+
+class PayerRepository:    
+    __payers = dict()
+        
+    def add_to_respective_payer(transaction):
+        payer = PayerRepository.get_payer(transaction.payer_name)
+        points = transaction.points
+
+        payer.balance += points
+        payer.heap.add(transaction)
+
+    def get_payer(name) -> Payer:
+        PayerRepository.__add_payer_if_needed(name)
+        return PayerRepository.__payers[name]
+
+    def __add_payer_if_needed(self, name):
+        if name not in self.__payers:
+            self.__payers[name] = Payer(name)
+    
+    def get_balance_for_all_payers():
+        return {payer: payer.balance for payer in PayerRepository.__payers}
