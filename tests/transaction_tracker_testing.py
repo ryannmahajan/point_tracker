@@ -1,9 +1,34 @@
 import unittest
 from payer import PayerRepository
-from transaction import Transaction
+from transaction import Transaction, TransactionRepository
 from transaction_tracker import TransactionTracker
 
-class SimpleTest(unittest.TestCase):
+class TestsForSpend(unittest.TestCase):
+    def setUp(self):
+        self.tracker = TransactionTracker()
+
+        self.transactions_list = [
+            Transaction(payer= "DANNON1", points=300, timestamp= "2022-10-31T11:59:00Z"),
+            Transaction(payer= "DANNON2", points=300, timestamp= "2022-10-31T11:40:00Z"),
+            Transaction(payer= "DANNON2", points=300, timestamp= "2022-10-31T11:00:00Z")
+        ]
+
+        for t in self.transactions_list:
+            self.tracker.track(t)
+    
+    def test_spend_decreases_overall_balance_correctly(self):
+        initial_sum = sum_of_balances(self.tracker.get_balance())
+        self.tracker.spend(400)
+        final_sum = sum_of_balances(self.tracker.get_balance())
+        self.assertEqual(final_sum, initial_sum - 400)
+    
+    def tearDown(self) -> None:
+        self.tracker = None
+        TransactionRepository.clear()
+        PayerRepository.clear()
+
+
+class AllTestsExceptSpend(unittest.TestCase):
 
     def setUp(self):
         self.tracker = TransactionTracker()
@@ -16,6 +41,11 @@ class SimpleTest(unittest.TestCase):
 
         for t in self.transactions_list:
             self.tracker.track(t)
+    
+    def tearDown(self) -> None:
+        self.tracker = None
+        TransactionRepository.clear()
+        PayerRepository.clear()
 
     def test_balance(self):
         balances_dict = self.tracker.get_balance()
@@ -24,12 +54,6 @@ class SimpleTest(unittest.TestCase):
 
         self.assertEqual(dannon_1_balance, 300)
         self.assertEqual(dannon2_balance, 600)
-
-    def test_spend(self):
-        initial_sum = sum_of_balances(self.tracker.get_balance())
-        self.tracker.spend(400)
-        final_sum = sum_of_balances(self.tracker.get_balance())
-        self.assertEqual(final_sum, initial_sum - 400)
     
     def test_track_positive_transaction(self):
         transaction = Transaction(payer= "DANNON1", points=300, timestamp= "2022-10-31T11:50:00Z")

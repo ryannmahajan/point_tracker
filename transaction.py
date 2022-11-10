@@ -36,3 +36,6 @@ class TransactionRepository:
     
     def get_heap():
         return TransactionRepository.__transactions
+    
+    def clear():
+        TransactionRepository.__transactions = Heap()

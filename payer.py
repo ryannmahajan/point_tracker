@@ -30,3 +30,6 @@ class PayerRepository:
     
     def get_balance_for_all_payers():
         return {payer_name: payer.balance for payer_name, payer in PayerRepository.__payers.items()}
+    
+    def clear():
+        PayerRepository.__payers.clear()
